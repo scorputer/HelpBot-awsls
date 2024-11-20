@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelpBot - Wamovations</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div id="chat-container">
+        <header>
+            <img src="/static/logo.png" alt="Wamovations Logo" id="logo">
+            <h1>HelpBot</h1>
+            <p>How can I help you today?</p>
+            <select id="role-selector">
+                <!-- Options will be dynamically loaded here -->
+            </select>
+            <button onclick="selectRole()">Select</button>
+        </header>
+        <div id="conversation-tab">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <div id="input-section">
+            <input type="text" id="user-input" placeholder="Ask me anything...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <div id="download-section">
+            <button onclick="downloadConversation()">Download Conversation</button>
+        </div>
+        {% if custom_prompt_enabled %}
+        <div id="custom-prompt-section">
+            <textarea id="custom-prompt-input" placeholder="Enter a custom prompt here..."></textarea>
+            <button onclick="sendCustomPrompt()">Submit Custom Prompt</button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer section -->
+    <footer>
+        <p>&copy; 2024 Wamovations LLC. All rights reserved.</p>
+        <p>Powered by OpenAI API</p>
+        <a href="http://www.wamovations.com">Back to Home</a>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captcha Verification</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="captcha-container">
+        <h1>Please verify you're not a robot</h1>
+        <form action="{{ url_for('verify_captcha') }}" method="POST">
+            <div class="g-recaptcha" data-sitekey="6Ld1bZQpAAAAAIq8TkstEYcwHNoxNBc9trRPIna0"></div>
+            <button type="submit">Verify</button>
+        </form>
+    </div>
+</body>
+</html> 
