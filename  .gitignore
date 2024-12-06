@@ -366,3 +366,6 @@ FodyWeavers.xsd
 *.sln
 *.pyproj
 /.vs
+
+# Ignore environment directory
+/env
