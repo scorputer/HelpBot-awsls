@@ -21,11 +21,11 @@ if not openai.api_key:
 def home():
     current_app.logger.debug("Rendering home page.")
     custom_prompt_enabled = current_app.config.get(
-        'CUSTOM_PROMPT_ENABLED', 
+        'CUSTOM_PROMPT_ENABLED',
         False
     )
     return render_template(
-        'index.html', 
+        'index.html',
         custom_prompt_enabled=custom_prompt_enabled
     )
 
