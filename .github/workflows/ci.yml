@@ -1,6 +1,5 @@
-
 ### **`.github/workflows/ci.yml`**
-```yaml
+
 name: CI
 
 on:
