@@ -2,7 +2,6 @@
 
 from flask import Blueprint, request, jsonify, render_template, current_app
 import os
-import json
 import openai
 from app.utils import load_prompt_files
 
@@ -21,8 +20,14 @@ if not openai.api_key:
 @main.route('/')
 def home():
     current_app.logger.debug("Rendering home page.")
-    custom_prompt_enabled = current_app.config.get('CUSTOM_PROMPT_ENABLED', False)
-    return render_template('index.html', custom_prompt_enabled=custom_prompt_enabled)
+    custom_prompt_enabled = current_app.config.get(
+        'CUSTOM_PROMPT_ENABLED', 
+        False
+    )
+    return render_template(
+        'index.html', 
+        custom_prompt_enabled=custom_prompt_enabled
+    )
 
 
 @main.route('/ask', methods=['POST'])
@@ -47,16 +52,22 @@ def ask():
 
     messages = []
     # Add system message with bot description
-    messages.append({"role": "system", "content": prompt_data['bot_description']})
+    messages.append(
+        {"role": "system", "content": prompt_data['bot_description']}
+    )
 
     # Add conversation history
     for message in conversation_history:
-        messages.append({"role": message['role'], "content": message['content']})
+        messages.append(
+            {"role": message['role'], "content": message['content']}
+        )
         current_app.logger.debug(f"Added to messages: {message}")
 
     # Add the latest user input
     messages.append({"role": "user", "content": user_input})
-    current_app.logger.debug(f"Final messages sent to OpenAI: {messages}")
+    current_app.logger.debug(
+        "Final messages sent to OpenAI: {}".format(messages)
+    )
 
     try:
         response = openai.ChatCompletion.create(
@@ -75,7 +86,9 @@ def ask():
         {"role": "assistant", "content": bot_response}
     ])
 
-    return jsonify({"response": bot_response, "history": conversation_history})
+    return jsonify(
+        {"response": bot_response, "history": conversation_history}
+    )
 
 
 @main.route('/roles', methods=['GET'])
@@ -116,7 +129,9 @@ def custom_prompt():
     conversation_history = request.json.get('history', [])
 
     current_app.logger.debug(f"Custom input: {custom_input}")
-    current_app.logger.debug(f"Conversation history: {conversation_history}")
+    current_app.logger.debug(
+        f"Conversation history: {conversation_history}"
+    )
 
     model = "gpt-3.5-turbo"
 
@@ -126,7 +141,9 @@ def custom_prompt():
 
     # Add conversation history
     for message in conversation_history:
-        messages.append({"role": message['role'], "content": message['content']})
+        messages.append(
+            {"role": message['role'], "content": message['content']}
+        )
         current_app.logger.debug(f"Added to messages: {message}")
 
     try:
@@ -146,4 +163,6 @@ def custom_prompt():
         {"role": "assistant", "content": bot_response}
     ])
 
-    return jsonify({"response": bot_response, "history": conversation_history})
+    return jsonify(
+        {"response": bot_response, "history": conversation_history}
+    )
