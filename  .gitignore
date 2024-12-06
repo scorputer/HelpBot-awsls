@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Ignore Visual Studio solution and project files
+*.sln
+*.pyproj
+/.vs

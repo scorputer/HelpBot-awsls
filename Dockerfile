@@ -1,7 +1,7 @@
 # Dockerfile
 
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # Set the working directory in the container
 WORKDIR /app
@@ -16,8 +16,5 @@ COPY . .
 # Expose port 8000 for the Flask app
 EXPOSE 8000
 
-# Declare the environment variable (without assigning a value)
-ENV OPENAI_API_KEY=""
-
 # Run the application
-CMD ["python", "run.py"]
+CMD ["python", "run.py", "--debug"]
