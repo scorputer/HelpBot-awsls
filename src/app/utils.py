@@ -4,19 +4,27 @@ import os
 import json
 import logging
 
+
 def load_prompt_files():
     logger = logging.getLogger(__name__)
     logger.info("Loading prompt files...")
 
     # Adjust the path to the prompts directory
-    prompt_directory = os.path.join(os.path.dirname(__file__), '..', 'prompts')
+    prompt_directory = os.path.join(
+        os.path.dirname(__file__),
+        '..',
+        'prompts'
+    )
     logger.debug(f"Prompt directory: {prompt_directory}")
 
     if not os.path.exists(prompt_directory):
         logger.error(f"Prompts directory not found at {prompt_directory}")
         return {}
 
-    prompt_files = [f for f in os.listdir(prompt_directory) if f.endswith('.json')]
+    prompt_files = [
+        f for f in os.listdir(prompt_directory)
+        if f.endswith('.json')
+    ]
     logger.debug(f"Prompt files found: {prompt_files}")
 
     prompt_data_cache = {}

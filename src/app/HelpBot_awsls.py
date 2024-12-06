@@ -1,7 +1,8 @@
-# run.py
+# app/HelpBot-awsls.py
 
 from app import create_app
 import argparse
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--custom-prompt', action='store_true', help="Enable custom prompt feature")

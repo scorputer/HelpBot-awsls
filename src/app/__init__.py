@@ -6,6 +6,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 
+
 def create_app(debug=False):
     app = Flask(__name__)
     app.debug = debug  # Enable or disable debug mode
@@ -17,6 +18,7 @@ def create_app(debug=False):
     setup_logging(app, debug)
 
     return app
+
 
 def setup_logging(app, debug):
     # Set log level based on debug mode
@@ -34,7 +36,11 @@ def setup_logging(app, debug):
 
     # File handler for logging
     log_file = os.path.join(log_dir, 'chatbot.log')
-    file_handler = RotatingFileHandler(log_file, maxBytes=10240, backupCount=10)
+    file_handler = RotatingFileHandler(
+        log_file,
+        maxBytes=10240,
+        backupCount=10
+    )
     file_handler.setFormatter(log_formatter)
     file_handler.setLevel(log_level)
 

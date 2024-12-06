@@ -6,6 +6,7 @@ import json
 import openai
 from app.utils import load_prompt_files
 
+
 main = Blueprint('main', __name__)
 
 # Load prompts
@@ -16,11 +17,13 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 if not openai.api_key:
     raise ValueError("OPENAI_API_KEY environment variable is not set.")
 
+
 @main.route('/')
 def home():
     current_app.logger.debug("Rendering home page.")
     custom_prompt_enabled = current_app.config.get('CUSTOM_PROMPT_ENABLED', False)
     return render_template('index.html', custom_prompt_enabled=custom_prompt_enabled)
+
 
 @main.route('/ask', methods=['POST'])
 def ask():
@@ -34,14 +37,15 @@ def ask():
     current_app.logger.debug(f"Conversation history: {conversation_history}")
 
     model = "gpt-3.5-turbo"
-
-    prompt_data = prompt_data_cache.get(role, {
-        "bot_description": "You are a helpful assistant.",
-        "guidelines": {"initial_prompt": "How can I assist you?"}
-    })
+    prompt_data = prompt_data_cache.get(
+        role,
+        {
+            "bot_description": "You are a helpful assistant.",
+            "guidelines": {"initial_prompt": "How can I assist you?"}
+        }
+    )
 
     messages = []
-
     # Add system message with bot description
     messages.append({"role": "system", "content": prompt_data['bot_description']})
 
@@ -61,7 +65,7 @@ def ask():
         )
         bot_response = response.choices[0].message['content'].strip()
         current_app.logger.debug(f"OpenAI response: {bot_response}")
-    except Exception as e:
+    except Exception:
         current_app.logger.exception("Failed to get response from OpenAI.")
         bot_response = "I'm sorry, I'm having trouble processing your request."
 
@@ -73,6 +77,7 @@ def ask():
 
     return jsonify({"response": bot_response, "history": conversation_history})
 
+
 @main.route('/roles', methods=['GET'])
 def get_roles():
     current_app.logger.debug("Fetching available roles.")
@@ -83,19 +88,22 @@ def get_roles():
     current_app.logger.debug(f"Available roles: {roles}")
     return jsonify(roles)
 
+
 @main.route('/prompt/<role>', methods=['GET'])
 def get_initial_prompt(role):
     current_app.logger.debug(f"Fetching initial prompt for role: {role}")
     try:
-        prompt = prompt_data_cache.get(role, {
-            "guidelines": {"initial_prompt": "How can I assist you?"}
-        })
+        prompt = prompt_data_cache.get(
+            role,
+            {"guidelines": {"initial_prompt": "How can I assist you?"}}
+        )
         initial_prompt = prompt['guidelines']['initial_prompt']
         current_app.logger.debug(f"Initial prompt: {initial_prompt}")
         return jsonify({"initial_prompt": initial_prompt})
     except Exception as e:
         current_app.logger.exception("Failed to fetch initial prompt.")
         return jsonify({"error": str(e)}), 500
+
 
 @main.route('/custom_prompt', methods=['POST'])
 def custom_prompt():
@@ -113,7 +121,6 @@ def custom_prompt():
     model = "gpt-3.5-turbo"
 
     messages = []
-
     # Add system message with the custom prompt
     messages.append({"role": "system", "content": custom_input})
 
@@ -129,7 +136,7 @@ def custom_prompt():
         )
         bot_response = response.choices[0].message['content'].strip()
         current_app.logger.debug(f"OpenAI response: {bot_response}")
-    except Exception as e:
+    except Exception:
         current_app.logger.exception("Failed to process custom prompt.")
         bot_response = "I'm sorry, I'm having trouble processing your request."
 
