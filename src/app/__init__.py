@@ -1,7 +1,7 @@
 # app/__init__.py
 
 from flask import Flask
-from app.routes import main
+from .routes import main
 import logging
 from logging.handlers import RotatingFileHandler
 import os
