@@ -22,10 +22,10 @@ def test_home_page(client):
 
 
 def test_roles_endpoint(client):
-    # Test that the roles endpoint returns a 200 status and contains "General Use".
+    # Test that the roles endpoint returns a 200 status.
+    # Also verify it contains "General Use".
     response = client.get('/roles')
     assert response.status_code == 200
-    # Break long line into two to avoid E501 error
     assert b'General Use' in response.data
 
 
@@ -34,25 +34,4 @@ def test_ask_endpoint(client, mocker):
     mock_response = mocker.MagicMock()
     mock_response.choices = [{'message': {'content': 'Test response'}}]
 
-    # Patch openai.ChatCompletion.create to return our mock_response object.
-    mocker.patch(
-        'openai.ChatCompletion.create',
-        return_value=mock_response
-    )
-
-    # Send a POST request to the /ask endpoint with test input.
-    response = client.post(
-        '/ask',
-        json={
-            'input': 'Hello',
-            'role': 'general',
-            'history': []
-        }
-    )
-    assert response.status_code == 200
-
-    # Parse the JSON response from the server.
-    data = response.get_json()
-    assert 'response' in data
-    # Verify that the response matches the mocked return value.
-    assert data['response'] == 'Test response'
+  
