@@ -32,15 +32,21 @@ def test_roles_endpoint(client):
 def test_ask_endpoint(client, mocker):
     # Create a mock response object for OpenAI's ChatCompletion.create
     mock_response = mocker.MagicMock()
-    mock_response.choices = [{'message': {'content': 'Test response'}}]
 
-    # Patch openai.ChatCompletion.create to return our mock_response object.
+    # Create a mock choice object that has a 'message' attribute
+    mock_choice = mocker.MagicMock()
+    mock_choice.message = {'content': 'Test response'}
+
+    # Assign the mock choice to the mock response's choices attribute
+    mock_response.choices = [mock_choice]
+
+    # Patch openai.ChatCompletion.create to return our mock_response object
     mocker.patch(
         'openai.ChatCompletion.create',
         return_value=mock_response
     )
 
-    # Send a POST request to the /ask endpoint with test input.
+    # Send a POST request to the /ask endpoint with test input
     response = client.post(
         '/ask',
         json={
@@ -51,8 +57,8 @@ def test_ask_endpoint(client, mocker):
     )
     assert response.status_code == 200
 
-    # Parse the JSON response from the server.
+    # Parse the JSON response from the server
     data = response.get_json()
     assert 'response' in data
-    # Verify that the response matches the mocked return value.
+    # Verify that the response matches the mocked return value
     assert data['response'] == 'Test response'
