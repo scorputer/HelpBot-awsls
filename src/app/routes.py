@@ -3,7 +3,7 @@
 from flask import Blueprint, request, jsonify, render_template, current_app
 import os
 import openai
-from app.utils import load_prompt_files
+from .utils import load_prompt_files
 
 
 main = Blueprint('main', __name__)
