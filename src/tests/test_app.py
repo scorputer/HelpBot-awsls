@@ -9,7 +9,7 @@ def client():
     # Create the Flask application and enable testing mode.
     app = create_app()
     app.config['TESTING'] = True
-    
+
     # Create a test client for sending requests to the application.
     client = app.test_client()
     yield client
@@ -25,6 +25,7 @@ def test_roles_endpoint(client):
     # Test that the roles endpoint returns a 200 status and contains "General Use".
     response = client.get('/roles')
     assert response.status_code == 200
+    # Break long line into two to avoid E501 error
     assert b'General Use' in response.data
 
 
