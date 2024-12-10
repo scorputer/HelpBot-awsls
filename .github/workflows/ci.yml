@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Set the environment that you've created in your GitHub repository settings
+    environment: HelpBot-awsls
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,16 +28,18 @@ jobs:
 
       - name: Confirm tests directory presence
         run: |
-          echo "Listing repository structure to confirm tests folder presence:"
+          echo "Listing repository structure:"
           ls -R
           echo "Listing src/tests directory contents:"
           ls -R src/tests
 
       - name: Lint with flake8
-        run: |
-          flake8 .
+        run: flake8 .
 
       - name: Run Tests with Coverage
+        env:
+          # Use the secret defined in your environment for OPENAI_API_KEY
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          # Using python -m pytest ensures the correct Python environment is used.
-          python -m pytest src/tests --cov=src/app --cov-report=term-missing
+          # Add src to PYTHONPATH so Python can import from src.app
+          PYTHONPATH=$PWD/src python -m pytest src/tests --cov=src/app --cov-report=term-missing
