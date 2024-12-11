@@ -1,6 +1,6 @@
 # app/HelpBot-awsls.py
 
-from . import create_app
+from src.app import create_app
 import argparse
 
 
