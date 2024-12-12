@@ -18,11 +18,8 @@ ENV PYTHONPATH="/app"
 # Expose port 8000 for the Flask app
 EXPOSE 8000
 
-# Set an empty environment variable for OPENAI_API_KEY
-# The actual key must be passed at runtime:
-# docker run -e OPENAI_API_KEY=your_api_key helpbot:latest
-ENV OPENAI_API_KEY=""
-
 # Run the application
 # Assuming HelpBot_awsls.py launches your Flask app on port 8000.
 CMD ["python", "src/app/HelpBot_awsls.py"]
+
+# Requires launching with OPENAI_API_KEY variable
