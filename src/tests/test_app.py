@@ -6,11 +6,8 @@ from src.app import create_app
 
 @pytest.fixture
 def client():
-    # Create the Flask application and enable testing mode.
     app = create_app()
     app.config['TESTING'] = True
-
-    # Create a test client for sending requests to the application.
     client = app.test_client()
     yield client
 
@@ -22,31 +19,57 @@ def test_home_page(client):
 
 
 def test_roles_endpoint(client):
-    # Test that the roles endpoint returns a 200 status.
+    # Test that the roles endpoint returns a 200 status code.
     # Also verify it contains "General Use".
     response = client.get('/roles')
     assert response.status_code == 200
-    assert b'General Use' in response.data
+    data = response.get_json()
+    assert any(role['value'] == 'general' for role in data)
+
+    # If you've added a CareerCoachPrompt.json file, check that it's listed
+    # Replace 'CareerCoachPrompt' with any other custom prompt file name you have.
+    assert any(role['value'] == 'CareerCoachPrompt' for role in data)
 
 
-def test_ask_endpoint(client, mocker):
-    # Create a mock response object for OpenAI's ChatCompletion.create
+def test_prompt_endpoint_general(client):
+    # Test the /prompt/general endpoint.
+    # General should return the fallback initial_prompt by default.
+    response = client.get('/prompt/general')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'initial_prompt' in data
+    # Assuming fallback is "How can I assist you?"
+    assert data['initial_prompt'] == "How can I assist you?"
+
+
+def test_prompt_endpoint_career_coach(client):
+    # Test the /prompt/CareerCoachPrompt endpoint if you have a
+    # CareerCoachPrompt.json file with an 'initial_prompt' defined.
+    response = client.get('/prompt/CareerCoachPrompt')
+    # If you haven't created this prompt file, remove or adjust this test.
+    assert response.status_code == 200
+    data = response.get_json()
+    # Check that the initial prompt matches what you defined in
+    # CareerCoachPrompt.json
+    assert 'initial_prompt' in data
+    assert data['initial_prompt'] == (
+        "Hi! What aspect of your career would you like help with today?"
+    )
+
+
+def test_ask_endpoint_general(client, mocker):
+    # Test the /ask endpoint using the 'general' role.
+    # Mock the OpenAI API call to return "Test response".
     mock_response = mocker.MagicMock()
-
-    # Create a mock choice object that has a 'message' attribute
     mock_choice = mocker.MagicMock()
     mock_choice.message = {'content': 'Test response'}
-
-    # Assign the mock choice to the mock response's choices attribute
     mock_response.choices = [mock_choice]
 
-    # Patch openai.ChatCompletion.create to return our mock_response object
     mocker.patch(
         'openai.ChatCompletion.create',
         return_value=mock_response
     )
 
-    # Send a POST request to the /ask endpoint with test input
     response = client.post(
         '/ask',
         json={
@@ -56,9 +79,33 @@ def test_ask_endpoint(client, mocker):
         }
     )
     assert response.status_code == 200
-
-    # Parse the JSON response from the server
     data = response.get_json()
     assert 'response' in data
-    # Verify that the response matches the mocked return value
     assert data['response'] == 'Test response'
+
+
+def test_ask_endpoint_career_coach(client, mocker):
+    # Test the /ask endpoint using the 'CareerCoachPrompt' role.
+    # Ensure prompts and system messages are applied correctly.
+    mock_response = mocker.MagicMock()
+    mock_choice = mocker.MagicMock()
+    mock_choice.message = {'content': 'Career advice response'}
+    mock_response.choices = [mock_choice]
+
+    mocker.patch(
+        'openai.ChatCompletion.create',
+        return_value=mock_response
+    )
+
+    response = client.post(
+        '/ask',
+        json={
+            'input': 'How can I improve my resume?',
+            'role': 'CareerCoachPrompt',
+            'history': []
+        }
+    )
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'response' in data
+    assert data['response'] == 'Career advice response'
